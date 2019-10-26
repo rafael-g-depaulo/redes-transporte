@@ -24,13 +24,14 @@ module.exports = class Channel {
     if (this.aEnviar.length === 0) return
 
     // pegar o pacote a ser enviado
-    const { data, size } = this.aEnviar.shift()
+    const { data, header } = this.aEnviar.shift()
+    const packet = { data, header }
 
     // transima o pacote
-    delay(1000 * size / this.bandwidth)
-      .then(() => print("terminei de transmitir o pacote", { data, size }, ", agora a rede vai levar ele até o meu remetente"))
+    delay(1000 * header.size / this.bandwidth)
+      .then(() => print("terminei de transmitir o pacote", packet, ", agora a rede vai levar ele até o meu remetente"))
       .then(() => print("a lista de pacotes que faltam ser enviados é", this.aEnviar))
-      .then(() => this.sendPacket({ data, size }))
+      .then(() => this.sendPacket(packet))
       .then(() => this.aEnviar.length !== 0 && this.sendLoop())  // mande o próx pacote, se existir
   }
   

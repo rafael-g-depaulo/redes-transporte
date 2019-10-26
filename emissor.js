@@ -2,6 +2,7 @@ const { Worker } = require('worker_threads')              // biblioteca para cri
 const Channel = require('./util/canal')                   // canal
 const config = require('./canalConfig')                   // configuração do canal
 const print = require('./util/logger')('EMISSOR', '36m')  // print bonitinho
+const Packet = require('./util/packet')
 
 console.log('\n\x1b[90m\x1b[1m--- Começando Programa -------------------------------------------------------------------------------------\x1b[0m')
 
@@ -15,9 +16,6 @@ receptor.on('message', message => {
 })
 
 // mandar uma mensagem para o receptor, para testar que o canal funciona (ISSO NÃO FICA NO TRABALHO, É SÓ PRA TESTAR SE O CANAL FUNCIONA)
-const mensagem = {
-  data: "oi sdds",
-  size: 10
-}
+const mensagem = new Packet("oi sdds")
 print("eu vou mandar uma mensagem para o receptor", mensagem)
 canal.send(mensagem)
