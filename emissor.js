@@ -8,7 +8,7 @@ console.log('\n\x1b[90m\x1b[1m--- Começando Programa --------------------------
 
 const receptor = new Worker('./receptor.js')      // criar o receptor
 const canal = new Channel(config)                 // criar o canal que simula atraso, perda de pacotes e limite de banda
-canal.setSender(msg => receptor.postMessage(msg)) // configurando para onde o canal deve mandar mensagens saindo do emissor (para o receptor)
+canal.setSender(msg => receptor.postMessage(msg)) // configurando para onde o canal deve mandar mensagens saindo do emissor (para o receptor)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
 // o que fazer quando a camada de transporte recebe uma mensagem
 receptor.on('message', message => {

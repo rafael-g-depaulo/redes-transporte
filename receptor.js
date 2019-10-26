@@ -12,5 +12,4 @@ canal.setSender(msg => emissor.postMessage(msg))  // configurando para onde o ca
 emissor.on('message', message => {
   print("caraca, olha o que eu recebi", message)
   print("Agora olha lá oh emissor, que eu vou te retornar uma mensagem idiota")
-  canal.send(new Packet("kkk, olha o idiota"))
-}) 
+  canal.send(new Packet("kkk, olha o idiota"))}) 
