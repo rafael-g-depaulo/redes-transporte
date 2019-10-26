@@ -1,16 +1,34 @@
-const { parentPort } = require('worker_threads')          // por onde o canal pode mandar mensagens para o emissor
-const config = require('./canalConfig')                   // configuração do canal
-const Channel = require('./util/canal')                   // canal de comunicação com o emissor
-const print = require('./util/logger')('RECEPTOR', '95m') // print bonitinho
-const Packet = require('./util/packet')                   // criador de pacotes
+// importando bibliotecas, classes e configurações
+const { parentPort } = require('worker_threads')            // por onde o canal pode mandar mensagens para o emissor
+const config = require('./canalConfig')                     // configuração do canal
+const Channel = require('./util/canal')                     // canal de comunicação com o emissor
+const print = require('./util/logger')('RECEPTOR', '95m')   // print bonitinho
+const Packet = require('./util/packet')                     // criador de pacotes
 
-const emissor = parentPort                        // pegar referencia do emissor
-const canal = new Channel(config)                 // criando o canal de comunicação com o emissor
-canal.setSender(msg => emissor.postMessage(msg))  // configurando para onde o canal deve mandar mensagens saindo do receptor (para o emissor)
+// estabelecendo canal
+const emissor = parentPort                                  // pegar referencia do receptor
+const canal = new Channel(config)                           // criando o canal de comunicação com o receptor
+canal.setSender(msg => emissor.postMessage(msg))            // configurando para onde o canal deve mandar mensagens saindo do receptor (para o emissor)
 
-// quando receber mensagens da camada de rede, mandar para a camada de transporte
+// pegando o arquivo onde a lógica da conexão está implementada
+const tipoDeReceptor = 'rdt'                                        // qual protocolo o receptor está usando
+const recieverLogicPath = `./algoritmos/${tipoDeReceptor}/reciever` // qual o caminho para o arquivo que implementa a lógica que o receptor está usando
+
+// criando a lógica de conexão
+const recieverLogic = require(recieverLogicPath)            // importando a lógica de conexão 
+const receptor = new recieverLogic(canal)                   // criando uma nova instância da lógica de conexão
+emissor.on('message', message => receptor.recieve(message)) // redirecionando todas as mensagens recebidas para a lógica de conexão
+
+
+// isso é inútil, pode tirar quando o trabalho estiver pronto //////////////////////////////////////////////
+
+// TEMPORARIO ###############################################################
 emissor.on('message', message => {
-  print("caraca, olha o que eu recebi", message)
-  print("Agora olha lá oh emissor, que eu vou te retornar uma mensagem idiota")
+  print("eu recebi", message, ". vou responder com uma mensagem idiota")
   canal.send(new Packet("kkk, olha o idiota"))
 }) 
+// TEMPORARIO ###############################################################
+
+module.exports = {
+  send: canal.send
+}

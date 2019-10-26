@@ -1,21 +1,23 @@
-const { Worker } = require('worker_threads')              // biblioteca para criar uma thread paralela que serve como o receptor
-const Channel = require('./util/canal')                   // canal
-const config = require('./canalConfig')                   // configuração do canal
-const print = require('./util/logger')('EMISSOR', '36m')  // print bonitinho
-const Packet = require('./util/packet')
+const { Worker } = require('worker_threads')                // biblioteca para criar uma thread paralela que serve como o receptor
+const Channel = require('./util/canal')                     // canal
+const config = require('./canalConfig')                     // configuração do canal
+const print = require('./util/logger')('EMISSOR', '36m')    // print bonitinho
 
-console.log('\n\x1b[90m\x1b[1m--- Começando Programa -------------------------------------------------------------------------------------\x1b[0m')
+const tipoDeEmissor = 'rdt'                                     // qual protocolo o emissor está usando
+const senderLogicPath = `./algoritmos/${tipoDeEmissor}/sender`  // qual o caminho para o arquivo que implementa a lógica que o emissor está usando
 
-const receptor = new Worker('./receptor.js')      // criar o receptor
-const canal = new Channel(config)                 // criar o canal que simula atraso, perda de pacotes e limite de banda
-canal.setSender(msg => receptor.postMessage(msg)) // configurando para onde o canal deve mandar mensagens saindo do emissor (para o receptor)
+const receptor = new Worker('./receptor.js')                // criar o receptor
+const canal = new Channel(config)                           // criar o canal que simula atraso, perda de pacotes e limite de banda
+canal.setSender(msg => receptor.postMessage(msg))           // configurando para onde o canal deve mandar mensagens saindo do emissor (para o receptor)
 
-// o que fazer quando a camada de transporte recebe uma mensagem
-receptor.on('message', message => {
-  print("eu recebi a seguinte mensagem:", message)
-})
+const senderLogic = require(senderLogicPath)                // importando a lógica de conexão 
+const emissor = new senderLogic(canal)                      // criando uma nova instância da lógica de conexão
+receptor.on('message', message => emissor.recieve(message)) // redirecionando todas as mensagens recebidas para a lógica de conexão
 
-// mandar uma mensagem para o receptor, para testar que o canal funciona (ISSO NÃO FICA NO TRABALHO, É SÓ PRA TESTAR SE O CANAL FUNCIONA)
-const mensagem = new Packet("oi sdds")
-print("eu vou mandar uma mensagem para o receptor", mensagem)
-canal.send(mensagem)
+// TEMPORARIO ###############################################################
+receptor.on('message', msg => print(`eu recebi a mensagem`, msg))
+// TEMPORARIO ###############################################################
+
+module.exports = {
+  send: canal.send
+}
