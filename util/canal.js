@@ -9,6 +9,7 @@ module.exports = class Channel {
     this.atraso = atraso
     this.bandwidth = bandwidth
     this.lossRate = lossRate
+    this.noLoss = noLoss
   }
   
   // por onde mandar mensagens
