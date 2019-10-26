@@ -1,5 +1,5 @@
-const delay = require('./delay')                  // adiciona delay
-const _print = require('./logger')('CANAL', '92m') // print bonitinho
+const delay = require('../util/delay')                  // adiciona delay
+const _print = require('../util/logger')('CANAL', '92m') // print bonitinho
 
 // se é pra mostrar na tela o que está acontecendo no canal
 const log = true

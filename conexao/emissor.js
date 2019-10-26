@@ -1,12 +1,12 @@
 const { Worker } = require('worker_threads')                // biblioteca para criar uma thread paralela que serve como o receptor
-const Channel = require('./util/canal')                     // canal
+const Channel = require('./canal')                     // canal
 const config = require('./canalConfig')                     // configuração do canal
-const print = require('./util/logger')('EMISSOR', '36m')    // print bonitinho
+const print = require('../util/logger')('EMISSOR', '36m')    // print bonitinho
 
 const tipoDeEmissor = 'rdt'                                     // qual protocolo o emissor está usando
-const senderLogicPath = `./algoritmos/${tipoDeEmissor}/sender`  // qual o caminho para o arquivo que implementa a lógica que o emissor está usando
+const senderLogicPath = `../algoritmos/${tipoDeEmissor}/sender`  // qual o caminho para o arquivo que implementa a lógica que o emissor está usando
 
-const receptor = new Worker('./receptor.js')                // criar o receptor
+const receptor = new Worker('./conexao/receptor.js')                // criar o receptor
 const canal = new Channel(config)                           // criar o canal que simula atraso, perda de pacotes e limite de banda
 canal.setSender(msg => receptor.postMessage(msg))           // configurando para onde o canal deve mandar mensagens saindo do emissor (para o receptor)
 

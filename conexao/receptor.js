@@ -1,9 +1,9 @@
 // importando bibliotecas, classes e configurações
 const { parentPort } = require('worker_threads')            // por onde o canal pode mandar mensagens para o emissor
 const config = require('./canalConfig')                     // configuração do canal
-const Channel = require('./util/canal')                     // canal de comunicação com o emissor
-const print = require('./util/logger')('RECEPTOR', '95m')   // print bonitinho
-const Packet = require('./util/packet')                     // criador de pacotes
+const Channel = require('./canal')                     // canal de comunicação com o emissor
+const print = require('../util/logger')('RECEPTOR', '95m')   // print bonitinho
+const Packet = require('../util/packet')                     // criador de pacotes
 
 // estabelecendo canal
 const emissor = parentPort                                  // pegar referencia do receptor
@@ -12,7 +12,7 @@ canal.setSender(msg => emissor.postMessage(msg))            // configurando para
 
 // pegando o arquivo onde a lógica da conexão está implementada
 const tipoDeReceptor = 'rdt'                                        // qual protocolo o receptor está usando
-const recieverLogicPath = `./algoritmos/${tipoDeReceptor}/reciever` // qual o caminho para o arquivo que implementa a lógica que o receptor está usando
+const recieverLogicPath = `../algoritmos/${tipoDeReceptor}/reciever` // qual o caminho para o arquivo que implementa a lógica que o receptor está usando
 
 // criando a lógica de conexão
 const recieverLogic = require(recieverLogicPath)            // importando a lógica de conexão 
