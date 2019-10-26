@@ -6,8 +6,8 @@ module.exports = class Packet {
     
     this.data = data        // mensagem
     this.header = {         // cabeçalhos
-      size: data.length,      // tamanho em bytes da mensagem (cada char tem 1 byte)
-      checksum: total & 1     // pega o primeiro digito binário da soma da mensagem
+      size: data.length,    // tamanho em bytes da mensagem (cada char tem 1 byte)
+      checksum: total & 1   // pega o primeiro digito binário da soma da mensagem
     }
   }
 }

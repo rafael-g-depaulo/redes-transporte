@@ -6,6 +6,7 @@ module.exports = class Reciever {
   
   // recebe mensagens por esse método
   recieve = packet => {
+    
 
   }
 }

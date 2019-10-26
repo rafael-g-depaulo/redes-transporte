@@ -16,7 +16,7 @@ canal.setSender(msg => receptor.postMessage(msg))           // configurando para
 // instanciando a lógica de conexão
 const senderLogic = require(senderLogicPath)                // importando a lógica de conexão 
 const emissor = new senderLogic(canal)                      // criando uma nova instância da lógica de conexão
-receptor.on('message', message => emissor.recieve(message)) // redirecionando todas as mensagens recebidas para a lógica de conexão
+// receptor.on('message', message => emissor.recieve(message)) // redirecionando todas as mensagens recebidas para a lógica de conexão
 
 // TEMPORARIO ###############################################################
 receptor.on('message', msg => print(`eu recebi a mensagem`, msg))
