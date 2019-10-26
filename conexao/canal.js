@@ -1,5 +1,6 @@
-const delay = require('./delay')                  // adiciona delay
-const _print = require('./logger')('CANAL', '92m') // print bonitinho
+const delay = require('../util/delay')                    // adiciona delay
+const _print = require('../util/logger')('CANAL', '92m')  // print bonitinho
+const corrupt = require('../util/corrupt')                // corrompe pacotes
 
 // se é pra mostrar na tela o que está acontecendo no canal
 const log = true
@@ -10,11 +11,12 @@ module.exports = class Channel {
   sender = null
   aEnviar = []
 
-  constructor({ atraso, bandwidth, lossRate, noLoss }) {
+  constructor({ atraso, bandwidth, lossRate, noLoss, corruptionRate}) {
     this.atraso = atraso
     this.bandwidth = bandwidth
     this.lossRate = lossRate
     this.noLoss = noLoss
+    this.corruptionRate = corruptionRate
   }
 
   // enquanto tiver um pacote a ser enviado, transmite eles para serem enviados
@@ -39,9 +41,11 @@ module.exports = class Channel {
   sendPacket = packet => {
     print("a rede está transportando o pacote:", packet, `mas a rede tem um delay de ${this.atraso}ms (${this.atraso/1000}s)`)
     delay(this.atraso)
-      .then(() => Math.random() < this.lossRate && !this.noLoss               // A mensagem se perdeu no canal?
-        ? print(`oops, a rede perdeu o pacote`, packet, ` no caminho`)                    // sim, se perdeu no canal
-        : print(`o pacote foi entregue!`, packet) || this.sender(packet)      // não, foi entregue
+    .then(() => Math.random() <= this.lossRate && !this.noLoss              // O pacote se perdeu no canal?
+      ? print(`oops, a rede perdeu o pacote`, packet, ` no caminho`)        // sim, se perdeu no canal
+      : Math.random() <= this.corruptionRate                                // O pacote foi corrimpido no caminho?
+          ? print(`o pacote foi entregue, mas foi corrompido!!!`) || this.sender(corrupt(packet)) // sim, foi entregue corrompido
+          : print(`o pacote foi entregue!`, packet) || this.sender(packet)  // não, foi entregue intacto
       )
   }
 
@@ -50,8 +54,6 @@ module.exports = class Channel {
 
   // transmitir para a camada de rede o que a camada de transporte mandar
   send = (...pacotes) => {
-    
-    // aqui da pra botar condição de corromper os pacotes, se necessário
 
     // se não está enviando pacotes (lista de envio vazia)
     const comeceLoop = this.aEnviar.length === 0
