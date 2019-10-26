@@ -17,7 +17,7 @@ module.exports = class Sender {
 
     setTimeout(() => {
       // checar se eu não recebi o ackk
-      if (!received)
+      if ((!received) || packet=="corrompido")//Se for falso OU se packet estiver corrompido
         this.sendMsg(packet)
     }, 10000)
   }

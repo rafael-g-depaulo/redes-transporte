@@ -6,7 +6,16 @@ module.exports = class Reciever {
   
   // recebe mensagens por esse método
   recieve = packet => {
-    
+    if(isCorrupted(packet)){//se estiver corrompido
+      this.send("corrompido")
+    }    
+    else{
+      this.send("Nope")
+    }
 
+  }
+
+  isCorrupted(packet){
+      
   }
 }
