@@ -1,4 +1,4 @@
-const Packet = require('./util/packet')       // criador de pacotes
+const { Packet } = require('./util/packet')   // criador de pacotes
 const emissor = require('./conexao/emissor')  // emissor
 
 // da um warning se não tiver essa linha

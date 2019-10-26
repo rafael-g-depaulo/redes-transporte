@@ -3,7 +3,7 @@ const { parentPort, workerData } = require('worker_threads')  // por onde o cana
 const config = require('./canalConfig')                       // configuração do canal
 const Channel = require('./canal')                            // canal de comunicação com o emissor
 const print = require('../util/logger')('RECEPTOR', '95m')    // print bonitinho
-const Packet = require('../util/packet')                      // criador de pacotes
+const { Packet, Checksum } = require('../util/packet')        // criador de pacotes
 
 // estabelecendo canal
 const emissor = parentPort                                    // pegar referencia do receptor
@@ -23,8 +23,8 @@ emissor.on('message', message => receptor.recieve(message))   // redirecionando 
 // isso é inútil, pode tirar quando o trabalho estiver pronto //////////////////////////////////////////////
 
 // TEMPORARIO ###############################################################
-emissor.on('message', message => {
-  print("eu recebi", message, ". vou responder com uma mensagem idiota")
+emissor.on('message', packet => {
+  print("eu recebi", packet, ". O checksum disso é:", Checksum(packet.data))
   canal.send(new Packet("kkk, olha o idiota"))
 }) 
 // TEMPORARIO ###############################################################
