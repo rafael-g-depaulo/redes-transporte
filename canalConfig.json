@@ -1,0 +1,6 @@
+{
+  "atraso": 1000,
+  "bandwidth": 500,
+  "lossRate": 0.5,
+  "noLoss": false
+}
