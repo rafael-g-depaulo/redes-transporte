@@ -1,5 +1,5 @@
 const { parentPort } = require('worker_threads')          // por onde o canal pode mandar mensagens para o emissor
-const config = require('./canalConfig')                   // configurações do canal
+const config = require('./canalConfig')                   // configuração do canal
 const Channel = require('./util/canal')                   // canal de comunicação com o emissor
 const print = require('./util/logger')('RECEPTOR', '95m') // print bonitinho
 
