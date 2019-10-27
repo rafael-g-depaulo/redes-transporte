@@ -44,11 +44,13 @@ module.exports = class Sender {
     this.callMade = true
 
     this.timeout = setTimeout(() => {
+     
       // checar se eu não recebi o ackk
       // if ((!this.expected) || packet.data=="corrompido")//Se for falso OU se packet estiver corrompido
-        this.rdtSendMsg(packet)
+        this.sendMsg(packet)
     }, 10000)   
   }
+  
   
   
 
