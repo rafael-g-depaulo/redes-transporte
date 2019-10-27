@@ -1,9 +1,10 @@
 exports.Packet = class {
-  constructor(data) {
+  constructor(data, { ack }) {
     this.data = data                    // mensagem
     this.header = {                     // cabeçalhos
       size: data.length,                // tamanho em bytes da mensagem (cada char tem 1 byte)
-      checksum: exports.Checksum(data)  // checksum da mensagem
+      checksum: exports.Checksum(data), // checksum da mensagem
+      ack,                              // ack bit
     }
   }
 }

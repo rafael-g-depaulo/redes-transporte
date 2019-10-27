@@ -17,7 +17,7 @@ const recieverLogicPath = `../algoritmos/${protocolo}/reciever` // qual o caminh
 // criando a lógica de conexão
 const recieverLogic = require(recieverLogicPath)              // importando a lógica de conexão 
 const receptor = new recieverLogic(canal)                     // criando uma nova instância da lógica de conexão
-emissor.on('message', message => receptor.recieve(message))   // redirecionando todas as mensagens recebidas para a lógica de conexão
+emissor.on('message', message => receptor.recieve(message))   // "Quando o emissor me envia uma mensagem" redirecionando todas as mensagens recebidas para a lógica de conexão
 
 
 // isso é inútil, pode tirar quando o trabalho estiver pronto //////////////////////////////////////////////
@@ -30,5 +30,5 @@ emissor.on('message', packet => {
 // TEMPORARIO ###############################################################
 
 module.exports = {
-  send: canal.send
+  send: receptor.rdtSendMsg
 }

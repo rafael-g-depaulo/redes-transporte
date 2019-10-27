@@ -1,1 +1,1 @@
-module.exports = (nome, color) => (...logs) => console.log(`\x1b[${color}[${nome}]\x1b[0m`, ...logs)
+module.exports = (nome, color = "37m") => (...logs) => console.log(`\x1b[${color}[${nome}]\x1b[0m`, ...logs)
