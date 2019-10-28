@@ -1,5 +1,7 @@
 const { Packet, Checksum } = require('../../util/packet')
-const print = require('../../util/logger')('RECIEVER-ME', "93m")
+const config = require('../../config')                          // configuração do canal
+const print = config.print.receptorME ?                         // print bonitinho (se é pra mandar print)
+  require('../../util/logger')('SENDER-ME', "93m") : () => {}
 
 module.exports = class Sender {
  //Teremos então 4 estados nessa classe
@@ -25,16 +27,19 @@ module.exports = class Sender {
     print("e o ack que eu espero ta ", this.expectedACK)
     print("e o ack que eu recebo ta ", packet.header.ack)
 
-    if((this.expectedACK == packet.header.ack) && (this.callMade == true)){//se os ack forem iguais E a call da de cima tiver sido feita, ele pode receber pacotes
+    // se os ack forem iguais E a call da de cima tiver sido feita, ele pode receber pacotes
+    if (this.callMade && this.expectedACK == packet.header.ack) {
+      // recebeu a resposta, então limpe o timeout
       clearTimeout(this.timeout)
-      if(this.expectedACK == 0) {
+
+      if (this.expectedACK == 0) {
         print("recebi e mudei meu estado pra ack = 1")
         this.expectedACK = 1 //muda o estado atual para o oposto
-      }
-      else {
-        print("recebi e mudei meu estado pra ack = 1")
+      } else {
+        print("recebi e mudei meu estado pra ack = 0")
         this.expectedACK = 0
       }
+
       print("meu estado atual é esperaACK", this.expectedACK)
       this.callMade = false
     }
@@ -42,11 +47,11 @@ module.exports = class Sender {
 
   // chamado pela camada de aplicação quando quiser enviar mensagens para receptor
   rdtSendMsg = data => {
-    if(!this.callMade){//Se nao tiver enviando uma mensagem
+    //Se nao tiver enviando uma mensagem
+    if (!this.callMade) {
       print("cheguei no sender")
-      this.sendMsg(this.sentPacket = new Packet(data.data, { ack: this.expectedACK }))
-    }
-    else print("desculpa, ja to enviando uma mensagem bonitinha :(")
+      this.sendMsg(this.sentPacket = new Packet(data, { ack: this.expectedACK }))
+    } else print("desculpa, ja to enviando uma mensagem bonitinha :(")
   }
   
   // chamado pela camada de transporte (essa classe) quando quiser enviar mensagens para receptor
@@ -59,14 +64,7 @@ module.exports = class Sender {
 
     this.timeout = setTimeout(() => {
       print("estourou o timeout, reenviando pacote", packet)
-     
-      // checar se eu não recebi o ackk
-      // if ((!this.expected) || packet.data=="corrompido")//Se for falso OU se packet estiver corrompido
-        this.sendMsg(packet)
+      this.sendMsg(packet)
     }, 10000)   
   }
-  
-  
-  
-
 }

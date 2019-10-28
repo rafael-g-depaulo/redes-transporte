@@ -1,8 +1,9 @@
 // importando bibliotecas, classes e configurações
 const { Worker } = require('worker_threads')                // biblioteca para criar uma thread paralela que serve como o receptor
 const Channel = require('./canal')                          // canal
-const config = require('./canalConfig')                     // configuração do canal
-const print = require('../util/logger')('EMISSOR', '36m')   // print bonitinho
+const config = require('../config')                         // configuração do canal
+const print = config.print.emissor ?                        // print bonitinho (se é pra mandar print)
+  require('../util/logger')('EMISSOR', '36m') : () => {}
 
 // escolhendo o tipo de conexão
 const protocolo = 'rdt'                                     // qual protocolo o emissor está usando
@@ -10,7 +11,7 @@ const senderLogicPath = `../algoritmos/${protocolo}/sender` // qual o caminho pa
 
 // esbelendo canal de comunicação com o receptor
 const receptor = new Worker('./conexao/receptor.js', { worketData: protocolo }) // criar o receptor
-const canal = new Channel(config)                           // criar o canal que simula atraso, perda de pacotes e limite de banda
+const canal = new Channel(config.canal)                     // criar o canal que simula atraso, perda de pacotes e limite de banda
 canal.setSender(msg => receptor.postMessage(msg))           // configurando para onde o canal deve mandar mensagens saindo do emissor (para o receptor)
 
 // instanciando a lógica de conexão
@@ -23,5 +24,5 @@ receptor.on('message', message => emissor.recieve(message)) // "quando o recepto
 // TEMPORARIO ###############################################################
 
 module.exports = {
-  send: pkt => print("enviando o pacote:", pkt) || emissor.rdtSendMsg(pkt)
+  send: msg => print("enviando a mensagem", msg) || emissor.rdtSendMsg(msg)
 }

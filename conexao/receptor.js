@@ -1,13 +1,13 @@
 // importando bibliotecas, classes e configurações
 const { parentPort, workerData } = require('worker_threads')  // por onde o canal pode mandar mensagens para o emissor
-const config = require('./canalConfig')                       // configuração do canal
+const config = require('../config')                           // configuração do canal
 const Channel = require('./canal')                            // canal de comunicação com o emissor
-const print = require('../util/logger')('RECEPTOR', '95m')    // print bonitinho
-const { Packet, Checksum } = require('../util/packet')        // criador de pacotes
+const print = config.print.receptor ?                         // print bonitinho (se é pra mandar print)
+  require('../util/logger')('RECEPTOR', '95m') : () => {}
 
 // estabelecendo canal
 const emissor = parentPort                                    // pegar referencia do receptor
-const canal = new Channel(config)                             // criando o canal de comunicação com o receptor
+const canal = new Channel(config.canal)                       // criando o canal de comunicação com o receptor
 canal.setSender(msg => emissor.postMessage(msg))              // configurando para onde o canal deve mandar mensagens saindo do receptor (para o emissor)
 
 // pegando o arquivo onde a lógica da conexão está implementada
@@ -21,7 +21,6 @@ emissor.on('message', message => receptor.recieve(message))   // "Quando o emiss
 
 
 // isso é inútil, pode tirar quando o trabalho estiver pronto //////////////////////////////////////////////
-
 // TEMPORARIO ###############################################################
 // emissor.on('message', packet => {
 //   print("eu recebi", packet, ". O checksum disso é:", Checksum(packet.data))

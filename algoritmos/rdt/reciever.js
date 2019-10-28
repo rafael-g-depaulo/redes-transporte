@@ -1,7 +1,9 @@
 const { Packet, Checksum } = require('../../util/packet')
-const print = require('../../util/logger')('RECIEVER-ME', "93m")
+const config = require('../../config')                          // configuração do canal
+const print = config.print.receptorME ?                         // print bonitinho (se é pra mandar print)
+  require('../../util/logger')('RECIEVER-ME', "93m") : () => {}
 
-module.exports = class Reciever {
+  module.exports = class Reciever {
   //Aqui teremos dois estados
   // expect = 0 (espera ACK =0)
   // Expect = 1
@@ -16,7 +18,7 @@ module.exports = class Reciever {
   recieve = packet => {
     let aick
     if (this.isCorrupted(packet)) {//se estiver corrompido
-      if(packet.header.ack == 0) {
+      if (packet.header.ack == 0) {
         aick = 1
         this.send(new Packet(packet.data, { ack: aick }))
       }
@@ -49,5 +51,5 @@ module.exports = class Reciever {
 
     print("olha deu bom") 
     return false
-  }
+   }
 }

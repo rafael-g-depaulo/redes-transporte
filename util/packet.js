@@ -1,8 +1,11 @@
 exports.Packet = class {
-  constructor(data, { ack }) {
+  constructor(data, { ack = 0, options = {} }) {
+    options.length = options.length || 0
+    const size = data.length + 5*4 + options.length
+
     this.data = data                    // mensagem
     this.header = {                     // cabeçalhos
-      size: data.length,                // tamanho em bytes da mensagem (cada char tem 1 byte)
+      size,                             // tamanho em bytes da mensagem (cada char tem 1 byte)
       checksum: exports.Checksum(data), // checksum da mensagem
       ack,                              // ack bit
     }
