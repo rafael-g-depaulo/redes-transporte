@@ -2,7 +2,7 @@
 const { Worker } = require('worker_threads')                  // biblioteca para criar uma thread paralela que serve como o receptor
 const Channel = require('./canal')                            // canal
 const config = require('../config')                           // configuração do canal
-const print = require('../util/logger')(config.print.emissor) // print bonitinho (se é pra mandar print)
+const print = require('../util/logger')(config.print.emissor) // print bonitinho 
 
 // escolhendo o tipo de conexão
 const protocolo = 'rdt'                                     // qual protocolo o emissor está usando
@@ -23,5 +23,5 @@ receptor.on('message', message => emissor.recieve(message)) // "quando o recepto
 // TEMPORARIO ###############################################################
 
 module.exports = {
-  send: msg => print("enviando a mensagem", msg) || emissor.rdtSendMsg(msg)
+  send: msg => print("enviando a mensagem", msg) || emissor.sendMsg(msg)
 }

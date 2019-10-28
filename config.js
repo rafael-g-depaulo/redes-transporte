@@ -12,7 +12,7 @@ module.exports = {
       cor: '36m',
     },
     emissorME: {
-      log: false,
+      log: true,
       nome: 'EMISSOR-ME',
       cor: '93m',
     },

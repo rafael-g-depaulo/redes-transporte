@@ -1,7 +1,7 @@
 const delay = require('../util/delay')            // adiciona delay
 const corrupt = require('../util/corrupt')        // corrompe pacotes
 const { print: { canal } } = require('../config') // configuração do canal
-const print = require('../util/logger')(canal)    // print bonitinho (se é pra mandar print)
+const print = require('../util/logger')(canal)    // print bonitinho 
 
 module.exports = class Channel {
   
