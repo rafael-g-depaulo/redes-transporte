@@ -8,33 +8,31 @@ const print = config.print.receptorME ?                         // print bonitin
   // expect = 0 (espera ACK =0)
   // Expect = 1
 
-  expect = 0//estado inicial
+  expect = 0            // estado inicial
+  msgHandler = () => {} // entrega mensagens a camada de aplicação
+
   constructor(channel) {
     // para mandar mensagens para o outro host, mande pelo this.send
     this.send = channel.send  
   }
   
+  // mandar mensagens corretas recebidas para a camada de aplicação
+  onMsg = msgHandler => this.msgHandler = msgHandler
+  deliver = pkt => this.msgHandler(pkt.data)
+
   // recebe mensagens por esse método
   recieve = packet => {
-    let ack
-    if (this.isCorrupted(packet)) {//se estiver corrompido
-      if (packet.header.ack == 0) {
-        ack = 1
-        this.send(new Packet(packet.data, { ack }))
-      } else {
-        ack = 0
-        this.send(new Packet(packet.data, { ack }))
-      }
-    } else {//se nao estiver corrompido mas o ack estiver errado
-        if (this.expect!= packet.header.ack){
-          //me deixou confuso isso aqui. Como meu ACK veio errado (exemplo: Expected = 0 ACK1) eu vou enviar o ACK que EU recebi para o sender, que espera um ACK=0 mas recebe ACK =1
-          print("Olha nem corrompeu mas ack ta baubau")
-          this.send(packet)
-        } else {//Se o ACK for o esperado
-          //tenho umas dúvidas. Aqui eu envio esse pacote, porque como ele veio com o ack correto por exemplo, esperava 0 e ACK= 0, ele vai enviar o pacote com o ACK correto para o sender
-          print("recebi o pacote deboinhas", packet)
-          this.send(packet)
-        }
+    // se estiver corrompido ou não é o pacote certo (número de sequencia errado)
+    if (this.isCorrupted(packet) || this.expect != packet.header.ack) {
+      print("Recebi um pacote corrompido, duplicado ou fora de ordem")
+      this.send(new Packet(packet.data, { ack: this.expect ^ 0 }))  
+    
+    // se o número de sequencia for o esperado
+    } else {
+      print("recebi o pacote deboinhas", packet)
+      this.deliver(packet)      // entrega a mensagem para a camada de aplicação
+      this.expect ^= 1          // troca o ack esperado (0->1, 1->0)
+      this.send(packet)         // manda o ACK
     }
   }
 
