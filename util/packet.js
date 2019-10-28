@@ -19,3 +19,5 @@ exports.Checksum = data => {
     total += data.charCodeAt(i)
   return total & 1
 }
+
+exports.isCorrupted = packet => packet.header.checksum != exports.Checksum(packet.data)
