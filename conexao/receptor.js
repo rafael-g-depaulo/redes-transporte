@@ -23,10 +23,10 @@ emissor.on('message', message => receptor.recieve(message))   // "Quando o emiss
 // isso é inútil, pode tirar quando o trabalho estiver pronto //////////////////////////////////////////////
 
 // TEMPORARIO ###############################################################
-emissor.on('message', packet => {
-  print("eu recebi", packet, ". O checksum disso é:", Checksum(packet.data))
-  canal.send(new Packet("kkk, olha o idiota"))
-}) 
+// emissor.on('message', packet => {
+//   print("eu recebi", packet, ". O checksum disso é:", Checksum(packet.data))
+//   canal.send(new Packet("kkk, olha o idiota", {}))
+// }) 
 // TEMPORARIO ###############################################################
 
 module.exports = {
