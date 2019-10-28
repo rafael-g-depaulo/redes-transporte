@@ -1,9 +1,8 @@
 // importando bibliotecas, classes e configurações
-const { parentPort, workerData } = require('worker_threads')  // por onde o canal pode mandar mensagens para o emissor
-const config = require('../config')                           // configuração do canal
-const Channel = require('./canal')                            // canal de comunicação com o emissor
-const print = config.print.receptor ?                         // print bonitinho (se é pra mandar print)
-  require('../util/logger')('RECEPTOR', '95m') : () => {}
+const { parentPort, workerData } = require('worker_threads')    // por onde o canal pode mandar mensagens para o emissor
+const config = require('../config')                             // configuração do canal
+const Channel = require('./canal')                              // canal de comunicação com o emissor
+const print = require('../util/logger')(config.print.receptor)  // print bonitinho (se é pra mandar print)
 
 // estabelecendo canal
 const emissor = parentPort                                    // pegar referencia do receptor
@@ -12,7 +11,7 @@ canal.setSender(msg => emissor.postMessage(msg))              // configurando pa
 
 // pegando o arquivo onde a lógica da conexão está implementada
 const protocolo = workerData || 'rdt'                           // qual protocolo o receptor está usando
-const recieverLogicPath = `../algoritmos/${protocolo}/reciever` // qual o caminho para o arquivo que implementa a lógica que o receptor está usando
+const recieverLogicPath = `../protocolos/${protocolo}/reciever` // qual o caminho para o arquivo que implementa a lógica que o receptor está usando
 
 // criando a lógica de conexão
 const recieverLogic = require(recieverLogicPath)              // importando a lógica de conexão 
@@ -29,5 +28,6 @@ receptor.onMsg(msg => print('eu recebi uma mensagem!', msg))
 // TEMPORARIO ###############################################################
 
 module.exports = {
-  send: receptor.rdtSendMsg
+  send: receptor.rdtSendMsg,
+  onMsg: receptor.onMsg,
 }

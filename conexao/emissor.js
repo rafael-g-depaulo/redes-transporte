@@ -1,13 +1,12 @@
 // importando bibliotecas, classes e configurações
-const { Worker } = require('worker_threads')                // biblioteca para criar uma thread paralela que serve como o receptor
-const Channel = require('./canal')                          // canal
-const config = require('../config')                         // configuração do canal
-const print = config.print.emissor ?                        // print bonitinho (se é pra mandar print)
-  require('../util/logger')('EMISSOR', '36m') : () => {}
+const { Worker } = require('worker_threads')                  // biblioteca para criar uma thread paralela que serve como o receptor
+const Channel = require('./canal')                            // canal
+const config = require('../config')                           // configuração do canal
+const print = require('../util/logger')(config.print.emissor) // print bonitinho (se é pra mandar print)
 
 // escolhendo o tipo de conexão
 const protocolo = 'rdt'                                     // qual protocolo o emissor está usando
-const senderLogicPath = `../algoritmos/${protocolo}/sender` // qual o caminho para o arquivo que implementa a lógica que o emissor está usando
+const senderLogicPath = `../protocolos/${protocolo}/sender` // qual o caminho para o arquivo que implementa a lógica que o emissor está usando
 
 // esbelendo canal de comunicação com o receptor
 const receptor = new Worker('./conexao/receptor.js', { worketData: protocolo }) // criar o receptor

@@ -1,8 +1,7 @@
 const { Packet, Checksum } = require('../../util/packet')
-const config = require('../../config')                          // configuração do canal
-const print = config.print.receptorME ?                         // print bonitinho (se é pra mandar print)
-  require('../../util/logger')('SENDER-ME', "93m") : () => {}
-
+const { print: { emissorME }} = require('../../config')  // configuração do canal
+const print = require('../../util/logger')(emissorME)    // print bonitinho (se é pra mandar print)
+  
 module.exports = class Sender {
  //Teremos então 4 estados nessa classe
  // inicial ACK=0 callMade= false (nao recebeu tarefa)

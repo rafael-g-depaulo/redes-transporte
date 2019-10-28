@@ -1,7 +1,6 @@
 const { Packet, Checksum } = require('../../util/packet')
-const config = require('../../config')                          // configuração do canal
-const print = config.print.receptorME ?                         // print bonitinho (se é pra mandar print)
-  require('../../util/logger')('RECIEVER-ME', "93m") : () => {}
+const { print: { receptorME }} = require('../../config')  // configuração do canal
+const print = require('../../util/logger')(receptorME)    // print bonitinho (se é pra mandar print)
 
   module.exports = class Reciever {
   //Aqui teremos dois estados
