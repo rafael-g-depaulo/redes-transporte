@@ -22,7 +22,7 @@ module.exports = {
       cor: '95m',
     },
     receptorME: {
-      log: false,
+      log: true,
       nome: 'RECEPTOR-ME',
       cor: '93m',
     },
@@ -37,6 +37,6 @@ module.exports = {
     // se o canal não tem perda de pacotes (se "true", é equivalente a lossRate = 0)
     noLoss: false,
     // qual a chance (0 a 1) de pacotes (que não são perdidos no caminho) de serem corrompidos
-    corruptionRate: 0.2,
+    corruptionRate: 0.8,
   },
 }
