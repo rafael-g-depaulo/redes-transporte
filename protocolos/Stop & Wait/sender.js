@@ -56,6 +56,6 @@ module.exports = class StopWait_Sender extends Sender {
     this.timeout = setTimeout(() => {
       this.print("estourou o timeout, reenviando pacote", packet)
       this.send2Net(packet)
-    }, this.timeout)   
+    }, this.timeoutAmmount)   
   }
 }

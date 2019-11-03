@@ -6,7 +6,7 @@ module.exports = class Sender extends Host {
   
   constructor(channel) {
     super(channel, "emissorME")
-    this.timeout = senderTimeout
+    this.timeoutAmmount = senderTimeout
   }
 
   // quando receber mensagens a enviar, coloque na lista de coisas a serem enviadas

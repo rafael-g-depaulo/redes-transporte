@@ -84,7 +84,7 @@ module.exports = class RDTSender extends Sender {
         for (i = 0; i < this.windowSize; i++) {
           this.send2Net(this.sent_noACK[base + i]);
         }
-      }, 10000)
+      }, this.timeoutAmmount)
       this.ACK = this.ACK + 1// Incremente o ack para usar como numero de sequencia da proxima mensagem.
     }
   }
