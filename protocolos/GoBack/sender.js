@@ -56,16 +56,11 @@ module.exports = class RDTSender extends Sender {
   sendWaitingMessages = () => {
     // se não tiver pacotes pra enviar, não faça nada
     if (this.toSend.length === 0) return
-
-    // if(this.sent_noACK.length == 0){//se nenhuma mensagem tiver sido enviada ainda
-    //     this.copiaSend = this.toSend.slice(0, this.toSend.length); //faz a copia do array de objetos
-    // }
-
-    //se tiver pacotes pra enviar
-    //aqui eu verifico se minha window esta cheio. se meu nextseqnum > base + window, ela esta cheia
+     //se tiver pacotes pra enviar
+    //aqui eu verifico se minha window esta cheia. se meu nextseqnum > base + window, ela esta cheia
     if(this.ACK <= (this.base + this.windowSize)){//se o numero de mensagens enviado for menor que o da banda
         const proxMsg = this.toSend.shift()//anda no array e recebe o elemento que foi retirado
-        aux = new Packet(proxMsg, { ack: this.ACK });//cria o pacote com a mensagem e o a
+        aux = new Packet(proxMsg, { ack: this.ACK });//cria o pacote com a mensagem e o numero de sequencia
         this.sent_noACK.push(proxMsg)//bota esse pacote na lista de pacotes enviados (vai de 0 a N)
         this.send2Net(aux)//envia o aux para o receptor
         }else print("minha janela ta cheinha");
