@@ -13,12 +13,21 @@ module.exports = class Reciever extends Host {
   // recebe mensagens por esse método
   recieve = packet => {
     // se estiver corrompido ou não é o pacote certo (número de sequencia errado)
-    if (isCorrupted(packet) || this.expect != packet.header.ack) {
-      this.print("recebi um pacote corrompido, duplicado ou fora de ordem")
-      this.send2Net(new Packet(packet.data, { ack: this.expect }))//envia o mesmo pacote pq o sender vai verificar que ta fora de ordem  
+    if(isCorrupted(packet) || this.expect != packet.header.ack){
+        this.print("corrompido ou fora de ordem")
+        this.send2Net(ACK)
+    }
+    
+    // if (isCorrupted(packet)){
+    //     this.print("recebi um pacote corrompido")
+    //     this.send2Net(new Packet(packet.data, { ack: (this.expect - 1) }))//envia o mesmo pacote pq o sender vai verificar que ta fora de ordem  
+     
+    // } else if(this.expect != packet.header.ack) {
+    //   this.print("recebi um pacote corrompido, duplicado ou fora de ordem")
+    //   this.send2Net(new Packet(packet.data, { ack: this.expect }))//envia o mesmo pacote pq o sender vai verificar que ta fora de ordem  
     
     // se o número de sequencia for o esperado
-    } else {
+   else {
       this.print("recebi um pacote:", packet)
       const ACK = new Packet("", { ack: this.expect })
       this.expect = this.expect + 1  // incremente o ack esperado
