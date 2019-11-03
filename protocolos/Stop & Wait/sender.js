@@ -3,11 +3,8 @@ const Sender = require('../sender')
 
 module.exports = class StopWait_Sender extends Sender {
 
- //Teremos então 4 estados nessa classe
- // inicial ACK=0 callMade= false (nao recebeu tarefa)
- // ACK=0 CallMade = true (recebeu tarefa, espera respossta 0)
- //ACK = 1 CallMade = false (espera tarefa nova)
- //ACK = 1 CallMade = true (recebeu tarefa, espera resposta 1)
+ //aqui a gente tem um tamanho de janela
+ windowSize = 4;
   expectedACK = 0
   callMade = false
   sentPacket = null

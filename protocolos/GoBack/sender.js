@@ -4,12 +4,16 @@ const Sender = require('../sender')
 module.exports = class RDTSender extends Sender {
 
  //Para começar teremos uma janela
- windowSize = 4
-  expectedACK = 0
-  callMade = false
-  sentPacket = null
+    windowSize = 4
+    ACK = 0 //o ack sempre começara no 0, esse é meu nextseqnum
+    base = ACK //base seria o meu expected ACK
+    //vamos construir as coisinhas
+    sent_noACK = [] //mensagens enviadas mas que nao receberam ACK ainda, é um array de pacotes
+    toSend = []//recebe o total de mensagens e fica depois como mensagens a serem enviadas
+    
+//   callMade = false
+//   sentPacket = null
 
-  toSend = []
 
   constructor(channel) {
     super(channel)  // chama a superclasse
@@ -21,30 +25,56 @@ module.exports = class RDTSender extends Sender {
   //Se ACK = 0 e ele receber 1, ou ACK=1 e recebe 0, ele não faz nada até o tempo acabar.
   recieve = packet => {
     // se os ack forem iguais E a call da de cima tiver sido feita, ele pode receber pacotes
-    if (this.callMade && this.expectedACK === packet.header.ack) {
+    if (this.base === packet.header.ack) {//se o numero que eu to esperando for o do pacote enviado
       // recebeu a resposta, então limpe o timeout
-      clearTimeout(this.timeout)
       this.print(`recebi um ACK #${packet.header.ack}, que é o que eu esperava`)
-      this.expectedACK ^= 1   // muda o estado atual para o oposto
-      this.callMade = false   // muda o estado. Não estou mais esperando um ACK
+      this.base = packet.header.ack + 1
+      if(this.base === this.ACK){
+          clearTimeout(this.timeout)
+          this.print(`parei o tempo pq ta de boa`)
+
+      }else {//se não for igual ao next seq number, rola timer novo
+        this.timeout = setTimeout(() => {
+            this.print("estourou o timeout, reenviando pacote", packet)
+            for(i=0; i<this.windowSize; i++){
+            this.send2Net(this.sent_noACK[base + i]);
+            }
+          }, 10000)   
+          this.ACK = this.ACK + 1//Incremente o ack para usar como numero de sequencia da proxima mensagem.
+        }
+      
 
       this.deliver(packet.data)
 
       // se tem mais mensagens para enviar, faça isso
       this.sendWaitingMessages()
     }
-  }
+    }
+  
 
   
   sendWaitingMessages = () => {
     // se não tiver pacotes pra enviar, não faça nada
     if (this.toSend.length === 0) return
 
+    // if(this.sent_noACK.length == 0){//se nenhuma mensagem tiver sido enviada ainda
+    //     this.copiaSend = this.toSend.slice(0, this.toSend.length); //faz a copia do array de objetos
+    // }
+
+    //se tiver pacotes pra enviar
+    //aqui eu verifico se minha window esta cheio. se meu nextseqnum > base + window, ela esta cheia
+    if(this.ACK <= (this.base + this.windowSize)){//se o numero de mensagens enviado for menor que o da banda
+        const proxMsg = this.toSend.shift()//anda no array e recebe o elemento que foi retirado
+        aux = new Packet(proxMsg, { ack: this.ACK });//cria o pacote com a mensagem e o a
+        this.sent_noACK.push(proxMsg)//bota esse pacote na lista de pacotes enviados (vai de 0 a N)
+        this.send2Net(aux)//envia o aux para o receptor
+        }else print("minha janela ta cheinha");
+        
     //Se nao tiver enviando uma mensagem
-    if (!this.callMade) {
-      const proxMsg = this.toSend.shift()
-      this.send2Net(this.sentPacket = new Packet(proxMsg, { ack: this.expectedACK }))
-    } else print("fui mandado enviar uma mensagem quando já estou esperando o ack de outro pacote")
+    // if (!this.callMade) {
+    //   const proxMsg = this.toSend.shift()
+    //   this.send2Net(this.sentPacket = new Packet(proxMsg, { ack: this.expectedACK }))
+    // } else print("fui mandado enviar uma mensagem quando já estou esperando o ack de outro pacote")
     
   }
 
@@ -62,10 +92,14 @@ module.exports = class RDTSender extends Sender {
     this.callMade = true
     this.send(packet)
     this.print(`estou enviando um pacote para o receptor. (seqNum: #${packet.header.ack})`)
-
+    if(this.base === this.ACK){
     this.timeout = setTimeout(() => {
       this.print("estourou o timeout, reenviando pacote", packet)
-      this.send2Net(packet)
+      for(i=0; i<this.windowSize; i++){
+      this.send2Net(this.sent_noACK[base + i]);
+      }
     }, 10000)   
+    this.ACK = this.ACK + 1//Incremente o ack para usar como numero de sequencia da proxima mensagem.
   }
+}
 }
