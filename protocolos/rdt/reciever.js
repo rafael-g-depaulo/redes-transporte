@@ -1,5 +1,4 @@
 const { Packet, isCorrupted } = require('../../util/packet')
-const { print: { receptorME }} = require('../../config')  // configuração do canal
 const Host = require('../host')
 
 module.exports = class Reciever extends Host {
@@ -10,7 +9,7 @@ module.exports = class Reciever extends Host {
 
   constructor(channel) {
     console.log
-    super(channel, receptorME)  // chama a superclasse
+    super(channel, "receptorME")  // chama a superclasse
   }
   
   // recebe mensagens por esse método

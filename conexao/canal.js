@@ -1,14 +1,19 @@
 const delay = require('../util/delay')            // adiciona delay
 const corrupt = require('../util/corrupt')        // corrompe pacotes
-const { print: { canal } } = require('../config') // configuração do canal
-const print = require('../util/logger')(canal)    // print bonitinho 
+const {
+  atraso,
+  bandwidth,
+  lossRate,
+  noLoss,
+  corruptionRate } = require('../config').canal   // configuração do canal
+const print = require('../util/logger').getPrint("canal") // print bonitinho 
 
 module.exports = class Channel {
   
   sender = null
   aEnviar = []
 
-  constructor({ atraso, bandwidth, lossRate, noLoss, corruptionRate}) {
+  constructor() {
     this.atraso = atraso
     this.bandwidth = bandwidth
     this.lossRate = lossRate
@@ -41,8 +46,8 @@ module.exports = class Channel {
     .then(() => Math.random() <= this.lossRate && !this.noLoss              // O pacote se perdeu no canal?
       ? print(`oops, eu perdi o pacote`, packet, ` no caminho`)        // sim, se perdeu no canal
       : Math.random() <= this.corruptionRate                                // O pacote foi corrimpido no caminho?
-          ? print(`o pacote foi entregue, mas foi corrompido!!!`) || this.sender(corrupt(packet)) // sim, foi entregue corrompido
-          : print(`o pacote foi entregue!`, packet) || this.sender(packet)  // não, foi entregue intacto
+          ? print(`o pacote foi entregue, mas foi corrompido!!!`) && this.sender(corrupt(packet)) // sim, foi entregue corrompido
+          : print(`o pacote foi entregue!`, packet) && this.sender(packet)  // não, foi entregue intacto
       )
   }
 

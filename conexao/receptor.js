@@ -2,7 +2,7 @@
 const { parentPort, workerData } = require('worker_threads')    // por onde o canal pode mandar mensagens para o emissor
 const config = require('../config')                             // configuração do canal
 const Channel = require('./canal')                              // canal de comunicação com o emissor
-const print = require('../util/logger')(config.print.receptor)  // print bonitinho 
+const print = require('../util/logger').getPrint("receptor")           // print bonitinho 
 
 // estabelecendo canal
 const emissor = parentPort                                    // pegar referencia do receptor

@@ -1,6 +1,4 @@
 const { Packet, Checksum } = require('../../util/packet')
-const { print: { emissorME }} = require('../../config')  // configuração do canal
-// const print = require('../../util/logger')(emissorME)    // print bonitinho 
 const Host = require('../host')
 
 module.exports = class Sender extends Host {
@@ -15,7 +13,7 @@ module.exports = class Sender extends Host {
   sentPacket = null
 
   constructor(channel) {
-    super(channel, emissorME)  // chama a superclasse
+    super(channel, "emissorME")  // chama a superclasse
   }
   
   // recebe mensagens por esse método
@@ -29,8 +27,9 @@ module.exports = class Sender extends Host {
       clearTimeout(this.timeout)
       this.print(`recebi um ACK #${packet.header.ack}, que é o que eu esperava`)
       this.expectedACK ^= 1   // muda o estado atual para o oposto
-
       this.callMade = false   // muda o estado. Não estou mais esperando um ACK
+
+      this.deliver(packet.data)
     }
   }
 

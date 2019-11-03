@@ -1,12 +1,12 @@
-const printFactory = require('../util/logger') // print bonitinho
+const { getPrint } = require('../util/logger') // print bonitinho
 
 module.exports = class Host {
   // ! Não dê override nesse método quando for fazer uma subclasse de Host
   msgHandler = () => {} // o que fazer quando for entregar mensagens para a camada de aplicação
 
-  constructor(channel, printConfig) {
+  constructor(channel, configName) {
     // cria o print personalizado
-    this.print = printFactory(printConfig)
+    this.print = getPrint(configName)
     // para mandar mensagens para o outro host, mande pelo this.send
     this.send = channel.send  
   }

@@ -1,8 +1,7 @@
 // importando bibliotecas, classes e configurações
 const { Worker } = require('worker_threads')                  // biblioteca para criar uma thread paralela que serve como o receptor
 const Channel = require('./canal')                            // canal
-const config = require('../config')                           // configuração do canal
-const print = require('../util/logger')(config.print.emissor) // print bonitinho 
+const print = require('../util/logger').getPrint("emissor")  // print bonitinho 
 
 // escolhendo o tipo de conexão
 const protocolo = 'rdt'                                     // qual protocolo o emissor está usando
@@ -10,7 +9,7 @@ const senderLogicPath = `../protocolos/${protocolo}/sender` // qual o caminho pa
 
 // esbelendo canal de comunicação com o receptor
 const receptor = new Worker('./conexao/receptor.js', { worketData: protocolo }) // criar o receptor
-const canal = new Channel(config.canal)                     // criar o canal que simula atraso, perda de pacotes e limite de banda
+const canal = new Channel()                                 // criar o canal que simula atraso, perda de pacotes e limite de banda
 canal.setSender(msg => receptor.postMessage(msg))           // configurando para onde o canal deve mandar mensagens saindo do emissor (para o receptor)
 
 // instanciando a lógica de conexão
@@ -23,5 +22,6 @@ receptor.on('message', message => emissor.recieve(message)) // "quando o recepto
 // TEMPORARIO ###############################################################
 
 module.exports = {
-  send: msg => print("enviando a mensagem", msg) || emissor.sendMsg(msg)
+  send: msg => print("enviando a mensagem", msg) && emissor.sendMsg(msg),
+  onMsg: msgHandler => emissor.onMsg(msgHandler),
 }

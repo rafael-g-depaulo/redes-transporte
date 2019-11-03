@@ -26,6 +26,11 @@ module.exports = {
       nome: 'RECEPTOR-TRANS',
       cor: '93m',
     },
+    index: {
+      log: true,
+      nome: 'MAIN',
+      cor: '91m',  
+    }
   },
   canal: {
     // quantos ms demora para o primeiro byte de um pacote que começou a ser enviado a chegar ao destino
@@ -37,6 +42,6 @@ module.exports = {
     // se o canal não tem perda de pacotes (se "true", é equivalente a lossRate = 0)
     noLoss: false,
     // qual a chance (0 a 1) de pacotes (que não são perdidos no caminho) de serem corrompidos
-    corruptionRate: 0.8,
+    corruptionRate: 0.05,
   },
 }
