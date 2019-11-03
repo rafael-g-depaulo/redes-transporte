@@ -2,34 +2,34 @@ module.exports = {
   // se é pra printar a linha de pensamento de cada participante disso
   print: {
     canal: {
-      log: false,
-      nome: 'CANAL',
+      log: true,
+      nome: 'REDE',
       cor: '92m',
     },
     emissor: {
       log: true,
-      nome: 'EMISSOR',
+      nome: 'EMISSOR-APP',
       cor: '36m',
     },
     emissorME: {
       log: true,
-      nome: 'EMISSOR-ME',
+      nome: 'EMISSOR-TRANS',
       cor: '93m',
     },
     receptor: {
       log: true,
-      nome: 'RECEPTOR',
+      nome: 'RECEPTOR-APP',
       cor: '95m',
     },
     receptorME: {
       log: true,
-      nome: 'RECEPTOR-ME',
+      nome: 'RECEPTOR-TRANS',
       cor: '93m',
     },
   },
   canal: {
     // quantos ms demora para o primeiro byte de um pacote que começou a ser enviado a chegar ao destino
-    atraso: 1,
+    atraso: 500,
     // quantos bytes podem passar pelo canal por segundo
     bandwidth: 1000,
     // qual a porcentagem (0 a 1) de pacotes que se perdem no caminho

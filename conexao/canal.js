@@ -28,18 +28,18 @@ module.exports = class Channel {
 
     // transima o pacote
     delay(1000 * header.size / this.bandwidth)
-      .then(() => print("terminei de transmitir o pacote", packet, ", agora a rede vai levar ele até o meu remetente"))
-      .then(() => print("a lista de pacotes que faltam ser enviados é", this.aEnviar))
+      .then(() => print("terminei de transmitir o pacote", packet, ", agora vou levar ele até o meu remetente"))
+      // .then(() => print("a lista de pacotes que faltam ser enviados é", this.aEnviar))
       .then(() => this.sendPacket(packet))
       .then(() => this.aEnviar.length !== 0 && this.sendLoop())  // mande o próx pacote, se existir
   }
   
   // manda um pacote pela conexão (que demora this.atraso ms para chegar)
   sendPacket = packet => {
-    print("a rede está transportando o pacote:", packet, `mas a rede tem um delay de ${this.atraso}ms (${this.atraso/1000}s)`)
+    print("estou transportando o pacote:", packet, `mas a rede tem um delay de ${this.atraso}ms (${this.atraso/1000}s)`)
     delay(this.atraso)
     .then(() => Math.random() <= this.lossRate && !this.noLoss              // O pacote se perdeu no canal?
-      ? print(`oops, a rede perdeu o pacote`, packet, ` no caminho`)        // sim, se perdeu no canal
+      ? print(`oops, eu perdi o pacote`, packet, ` no caminho`)        // sim, se perdeu no canal
       : Math.random() <= this.corruptionRate                                // O pacote foi corrimpido no caminho?
           ? print(`o pacote foi entregue, mas foi corrompido!!!`) || this.sender(corrupt(packet)) // sim, foi entregue corrompido
           : print(`o pacote foi entregue!`, packet) || this.sender(packet)  // não, foi entregue intacto
