@@ -1,6 +1,7 @@
 const emissor = require('./conexao/emissor')              // emissor
 const print = require('./util/logger').getPrint("index")  // print bonitinho
-const { protocol } = require('./config')
+const { protocol } = require('./config')                  // configurações da questão
+const delay = require('./util/delay')                     // delay
 const {
   startTimer,
   endTimer,
@@ -13,7 +14,7 @@ process.setMaxListeners(0)
 console.log('\n\x1b[90m\x1b[1m--- Começando Programa -------------------------------------------------------------------------------------\x1b[0m')
 
 // testar quanto tempo demora para mandar 10 mensagens para o emissor
-const totalMsg = 3        // numero total de mensagens a serem enviadas
+const totalMsg = 10        // numero total de mensagens a serem enviadas
 let atualMsgs = totalMsg  // numero de mensagens que faltam serem enviadas
 const msgs = Array        // cria as mensagens a serem enviadas
   .from({length: totalMsg})
@@ -22,17 +23,24 @@ const msgs = Array        // cria as mensagens a serem enviadas
 
 print(`eu vou calcular quanto tempo demora para o protocolo ${protocol} enviar ${totalMsg} mensagens`)
 
+delay(1000).then(() => startTimer() && emissor.send(...msgs))
 
-setTimeout(() => startTimer() && emissor.send(...msgs), 1000)
-emissor.onMsg(msg => {
+ emissor.onMsg(msg => {
   // se ainda não é a resposta da última mensagem, não faça nada
   if (--atualMsgs > 0) return
-
+  
   // se recebeu a resposta para a última mensagem, termine o timer e pare o programa
   endTimer()
-  const totalTime = getTotalTime()
 
-  print(`todas as ${totalMsg} mensagens foram enviadas e recebidas. O tempo gasto foi ${totalTime}ms (${totalTime / 1000}s)`)
-  emissor.endConnection()
+  // espere 1 segundo e mostre os resultados para o usuário
+  delay(1000).then(() => {
+
+    const totalTime = getTotalTime()
+
+    print(`todas as ${totalMsg} mensagens foram enviadas e recebidas. O tempo gasto foi ${totalTime}ms (${totalTime / 1000}s)`)
+
+    // termina tudo
+    emissor.endConnection()
+  })
 })
 

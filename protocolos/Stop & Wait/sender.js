@@ -38,7 +38,6 @@ module.exports = class StopWait_Sender extends Sender {
     }
   }
 
-  
   sendWaitingMessages = () => {
     // se não tiver pacotes pra enviar, não faça nada
     if (this.toSend.length === 0) return
@@ -51,15 +50,6 @@ module.exports = class StopWait_Sender extends Sender {
     
   }
 
-  // chamado pela camada de aplicação quando quiser enviar mensagens para receptor
-  // sendMsg = (...data) => {
-  //   //Se nao tiver enviando uma mensagem
-  //   if (!this.callMade) {
-  //     this.toSend.push(...data) // adicionar a lista de coisas a enviar
-  //     this.sendWaitingMessages()
-  //   } else print("fui mandado enviar uma mensagem quando já estou esperando o ack de outro pacote")
-  // }
-  
   // chamado pela camada de transporte (essa classe) quando quiser enviar mensagens para receptor
   send2Net = packet => {
     this.callMade = true
@@ -69,6 +59,6 @@ module.exports = class StopWait_Sender extends Sender {
     this.timeout = setTimeout(() => {
       this.print("estourou o timeout, reenviando pacote", packet)
       this.send2Net(packet)
-    }, 10000)   
+    }, this.timeout)   
   }
 }
