@@ -21,6 +21,8 @@ module.exports = class Channel {
     this.corruptionRate = corruptionRate
   }
 
+  close = () => this.sender.close()
+
   // enquanto tiver um pacote a ser enviado, transmite eles para serem enviados
   // OBS: manda 1 pacote por vez, e demora pacote.size / bandwith segundos para transmitir o pacote
   sendLoop = () => {

@@ -22,6 +22,7 @@ receptor.on('message', message => emissor.recieve(message)) // "quando o recepto
 // TEMPORARIO ###############################################################
 
 module.exports = {
-  send: msg => print("enviando a mensagem", msg) && emissor.sendMsg(msg),
+  send: (...msgs) => print("enviando a(s) mensagem(s)", ...msgs) && emissor.sendMsg(...msgs),
   onMsg: msgHandler => emissor.onMsg(msgHandler),
+  endConnection: () => receptor.terminate()
 }

@@ -7,7 +7,7 @@ module.exports = class Host {
   constructor(channel, configName) {
     // cria o print personalizado
     this.print = getPrint(configName)
-    // para mandar mensagens para o outro host, mande pelo this.send
+    // para mandar mensagens para o outro host pela camada de rede o this.send é usado
     this.send = channel.send  
   }
   
@@ -25,4 +25,8 @@ module.exports = class Host {
 
   // a camada de aplicação mandou mandar uma mensagem para o outro host
   sendMsg = msg => {}
+
+  // chamado pela camada de transporte (essa camada) quando for pra enviar um pacote para...
+  // o outro Host pela camada de rede (usando o this.send)
+  send2Net = pkt => this.send(pkt)
 }

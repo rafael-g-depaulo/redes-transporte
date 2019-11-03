@@ -2,7 +2,7 @@ module.exports = {
   // se é pra printar a linha de pensamento de cada participante disso
   print: {
     canal: {
-      log: true,
+      log: false,
       nome: 'REDE',
       cor: '92m',
     },
@@ -12,7 +12,7 @@ module.exports = {
       cor: '36m',
     },
     emissorME: {
-      log: true,
+      log: false,
       nome: 'EMISSOR-TRANS',
       cor: '93m',
     },
@@ -22,7 +22,7 @@ module.exports = {
       cor: '95m',
     },
     receptorME: {
-      log: true,
+      log: false,
       nome: 'RECEPTOR-TRANS',
       cor: '93m',
     },

@@ -1,7 +1,7 @@
 const { Packet, Checksum } = require('../../util/packet')
-const Host = require('../host')
+const Sender = require('../sender')
 
-module.exports = class Sender extends Host {
+module.exports = class RDTSender extends Sender {
 
  //Teremos então 4 estados nessa classe
  // inicial ACK=0 callMade= false (nao recebeu tarefa)
@@ -12,8 +12,10 @@ module.exports = class Sender extends Host {
   callMade = false
   sentPacket = null
 
+  toSend = []
+
   constructor(channel) {
-    super(channel, "emissorME")  // chama a superclasse
+    super(channel)  // chama a superclasse
   }
   
   // recebe mensagens por esse método
@@ -30,17 +32,33 @@ module.exports = class Sender extends Host {
       this.callMade = false   // muda o estado. Não estou mais esperando um ACK
 
       this.deliver(packet.data)
+
+      // se tem mais mensagens para enviar, faça isso
+      this.sendWaitingMessages()
     }
   }
 
-  // chamado pela camada de aplicação quando quiser enviar mensagens para receptor
-  sendMsg = data => {
+  
+  sendWaitingMessages = () => {
+    // se não tiver pacotes pra enviar, não faça nada
+    if (this.toSend.length === 0) return
+
     //Se nao tiver enviando uma mensagem
     if (!this.callMade) {
-      this.send2Net(this.sentPacket = new Packet(data, { ack: this.expectedACK }))
+      const proxMsg = this.toSend.shift()
+      this.send2Net(this.sentPacket = new Packet(proxMsg, { ack: this.expectedACK }))
     } else print("fui mandado enviar uma mensagem quando já estou esperando o ack de outro pacote")
-
+    
   }
+
+  // chamado pela camada de aplicação quando quiser enviar mensagens para receptor
+  // sendMsg = (...data) => {
+  //   //Se nao tiver enviando uma mensagem
+  //   if (!this.callMade) {
+  //     this.toSend.push(...data) // adicionar a lista de coisas a enviar
+  //     this.sendWaitingMessages()
+  //   } else print("fui mandado enviar uma mensagem quando já estou esperando o ack de outro pacote")
+  // }
   
   // chamado pela camada de transporte (essa classe) quando quiser enviar mensagens para receptor
   send2Net = packet => {

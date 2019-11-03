@@ -8,7 +8,6 @@ module.exports = class Reciever extends Host {
   expect = 0
 
   constructor(channel) {
-    console.log
     super(channel, "receptorME")  // chama a superclasse
   }
   
@@ -16,15 +15,16 @@ module.exports = class Reciever extends Host {
   recieve = packet => {
     // se estiver corrompido ou não é o pacote certo (número de sequencia errado)
     if (isCorrupted(packet) || this.expect != packet.header.ack) {
-      this.print("Recebi um pacote corrompido, duplicado ou fora de ordem")
-      this.send(new Packet(packet.data, { ack: this.expect ^ 1 }))  
+      this.print("recebi um pacote corrompido, duplicado ou fora de ordem")
+      this.send2Net(new Packet(packet.data, { ack: this.expect ^ 1 }))  
     
     // se o número de sequencia for o esperado
     } else {
       this.print("recebi um pacote:", packet)
-      this.deliver(packet)      // entrega a mensagem para a camada de aplicação
-      this.expect ^= 1          // troca o ack esperado (0->1, 1->0)
-      this.send(packet)         // manda o ACK
+      const ACK = new Packet("", { ack: this.expect })
+      this.expect ^= 1      // troca o ack esperado (0->1, 1->0)
+      this.deliver(packet)  // entrega a mensagem para a camada de aplicação
+      this.send2Net(ACK)    // manda o ACK
     }
   }
 }
