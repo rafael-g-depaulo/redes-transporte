@@ -44,4 +44,5 @@ module.exports = {
     // qual a chance (0 a 1) de pacotes (que não são perdidos no caminho) de serem corrompidos
     corruptionRate: 0.05,
   },
+  protocol: "Stop & Wait",
 }

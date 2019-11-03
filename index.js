@@ -1,5 +1,6 @@
 const emissor = require('./conexao/emissor')              // emissor
 const print = require('./util/logger').getPrint("index")  // print bonitinho
+const { protocol } = require('./config')
 const {
   startTimer,
   endTimer,
@@ -12,14 +13,15 @@ process.setMaxListeners(0)
 console.log('\n\x1b[90m\x1b[1m--- Começando Programa -------------------------------------------------------------------------------------\x1b[0m')
 
 // testar quanto tempo demora para mandar 10 mensagens para o emissor
-const protocolName = 'Stop-&-Wait'
 const totalMsg = 3        // numero total de mensagens a serem enviadas
 let atualMsgs = totalMsg  // numero de mensagens que faltam serem enviadas
+const msgs = Array        // cria as mensagens a serem enviadas
+  .from({length: totalMsg})
+  .map((_, i) => `mensagem #${i+1}`)
 
 
-print(`eu vou calcular quanto tempo demora para o protocolo ${protocolName} enviar ${totalMsg} mensagens`)
+print(`eu vou calcular quanto tempo demora para o protocolo ${protocol} enviar ${totalMsg} mensagens`)
 
-const msgs = Array.from({length: totalMsg}).map((_, i) => `mensagem #${i+1}`)
 
 setTimeout(() => startTimer() && emissor.send(...msgs), 1000)
 emissor.onMsg(msg => {
