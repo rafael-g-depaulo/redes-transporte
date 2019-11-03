@@ -14,7 +14,11 @@ process.setMaxListeners(0)
 console.log('\n\x1b[90m\x1b[1m--- Começando Programa -------------------------------------------------------------------------------------\x1b[0m')
 
 // testar quanto tempo demora para mandar 10 mensagens para o emissor
+<<<<<<< Updated upstream
 const totalMsg = 10        // numero total de mensagens a serem enviadas
+=======
+const totalMsg = 8        // numero total de mensagens a serem enviadas
+>>>>>>> Stashed changes
 let atualMsgs = totalMsg  // numero de mensagens que faltam serem enviadas
 const msgs = Array        // cria as mensagens a serem enviadas
   .from({length: totalMsg})
