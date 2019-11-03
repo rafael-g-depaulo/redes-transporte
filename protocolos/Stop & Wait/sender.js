@@ -1,7 +1,7 @@
 const { Packet, Checksum } = require('../../util/packet')
 const Sender = require('../sender')
 
-module.exports = class RDTSender extends Sender {
+module.exports = class StopWait_Sender extends Sender {
 
  //Teremos então 4 estados nessa classe
  // inicial ACK=0 callMade= false (nao recebeu tarefa)

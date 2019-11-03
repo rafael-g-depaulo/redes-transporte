@@ -1,7 +1,7 @@
 const { Packet, isCorrupted } = require('../../util/packet')
-const Host = require('../host')
+const Reciever = require('../reciever')
 
-module.exports = class Reciever extends Host {
+module.exports = class StopWait_Reciever extends Reciever {
   //Aqui teremos dois estados
   // expect = 0 (espera ACK =0)
   // expect = 1
