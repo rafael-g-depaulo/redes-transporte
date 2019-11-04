@@ -30,8 +30,10 @@ module.exports = class RDTSender extends Sender {
     if (isCorrupted(packet)) return       // se o pacote veio corrompido, retorne
 
     this.print("recebi um ACK", packet.header.ack)
-    while (this.lastAckRecieved++ < packet.header.ack)
+    while (this.lastAckRecieved < packet.header.ack) {
       this.deliver(packet.data)
+      this.lastAckRecieved++
+    }
     this.base = packet.header.ack
 
     // se os ack forem iguais E a call da de cima tiver sido feita, ele pode receber pacotes
