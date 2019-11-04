@@ -14,20 +14,20 @@ process.setMaxListeners(0)
 console.log('\n\x1b[90m\x1b[1m--- Começando Programa -------------------------------------------------------------------------------------\x1b[0m')
 
 // testar quanto tempo demora para mandar 10 mensagens para o emissor
-const totalMsg = 50        // numero total de mensagens a serem enviadas
+const totalMsg = 100        // numero total de mensagens a serem enviadas
 let atualMsgs = totalMsg  // numero de mensagens que faltam serem enviadas
 const msgs = Array        // cria as mensagens a serem enviadas
   .from({length: totalMsg})
   .map((_, i) => `mensagem #${i+1}`)
 
 
-print(`eu vou calcular quanto tempo demora para o protocolo ${protocol} enviar ${totalMsg} mensagens`)
+print(`eu vou calcular quanto tempo demora para o protocolo "${protocol}" enviar ${totalMsg} mensagens`)
 
 delay(1000).then(() => startTimer() && emissor.send(...msgs))
 
  emissor.onMsg(msg => {
   // se ainda não é a resposta da última mensagem, não faça nada
-  if (--atualMsgs > 0) return print(atualMsgs)
+  if (--atualMsgs > 0) return
   
   // se recebeu a resposta para a última mensagem, termine o timer e pare o programa
   endTimer()

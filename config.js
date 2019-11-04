@@ -12,7 +12,7 @@ module.exports = {
       cor: '36m',
     },
     emissorME: {
-      log: true,
+      log: false,
       nome: 'EMISSOR-TRANS',
       cor: '93m',
     },
@@ -44,7 +44,7 @@ module.exports = {
     // qual a chance (0 a 1) de pacotes (que não são perdidos no caminho) de serem corrompidos
     corruptionRate: 0.003,
   },
-  protocol: "GoBack",
+  protocol: "Go Back N",
   senderTimeout: 5000,
-  windowSize: 10,
+  windowSize: 12,
 }
