@@ -7,7 +7,7 @@ module.exports = {
       cor: '92m',
     },
     emissor: {
-      log: true,
+      log: false,
       nome: 'EMISSOR-APP',
       cor: '36m',
     },
@@ -17,12 +17,12 @@ module.exports = {
       cor: '93m',
     },
     receptor: {
-      log: true,
+      log: false,
       nome: 'RECEPTOR-APP',
       cor: '95m',
     },
     receptorME: {
-      log: true,
+      log: false,
       nome: 'RECEPTOR-TRANS',
       cor: '93m',
     },
@@ -34,16 +34,17 @@ module.exports = {
   },
   canal: {
     // quantos ms demora para o primeiro byte de um pacote que começou a ser enviado a chegar ao destino
-    atraso: 500,
+    atraso: 100,
     // quantos bytes podem passar pelo canal por segundo
-    bandwidth: 1000,
+    bandwidth: 100,
     // qual a porcentagem (0 a 1) de pacotes que se perdem no caminho
-    lossRate: 0,
+    lossRate: 0.05,
     // se o canal não tem perda de pacotes (se "true", é equivalente a lossRate = 0)
     noLoss: false,
     // qual a chance (0 a 1) de pacotes (que não são perdidos no caminho) de serem corrompidos
-    corruptionRate: 0,
+    corruptionRate: 0.003,
   },
   protocol: "GoBack",
   senderTimeout: 5000,
+  windowSize: 10,
 }

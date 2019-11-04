@@ -1,6 +1,5 @@
 const { Packet, isCorrupted } = require('../../util/packet')
 const Host = require('../host')
-const { windowSize } = require('../../config')
 
 module.exports = class Reciever extends Host {
   //Aqui teremos dois estados
@@ -16,10 +15,10 @@ module.exports = class Reciever extends Host {
   recieve = packet => {
     
     // se estiver corrompido ou não é o pacote certo (número de sequencia errado)
-    if (isCorrupted(packet) || this.expect !== packet.header.ack){
-        this.print("corrompido ou fora de ordem. esperava:", this.expect, "recebi", packet.header.ack)
+    if (isCorrupted(packet) || this.expect !== packet.header.ack) {
+      this.print("corrompido ou fora de ordem. esperava:", this.expect, "recebi", packet.header.ack)
     }
-    
+  
     // se o número de sequencia for o esperado
    else {
       this.print("recebi um pacote:", packet)

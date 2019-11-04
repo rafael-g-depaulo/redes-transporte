@@ -1,14 +1,15 @@
 const { Packet, Checksum } = require('../../util/packet')
 const Sender = require('../sender')
 const { isCorrupted } = require('../../util/packet')
+const { windowSize } = require('../../config')
 
 module.exports = class RDTSender extends Sender {
 
   // Para começar teremos uma janela
-  windowSize = 4
   seqNum = 1           // o ack sempre começara no 0, esse é meu nextseqnum
   base = this.seqNum   // base seria o meu expected sequence number
   hasTimeout = false
+  lastAckRecieved = 0
 
   // vamos construir as coisinhas
   sent_noACK = [] // mensagens enviadas mas que nao receberam ACK ainda, é um array de pacotes
@@ -29,8 +30,9 @@ module.exports = class RDTSender extends Sender {
     if (isCorrupted(packet)) return       // se o pacote veio corrompido, retorne
 
     this.print("recebi um ACK", packet.header.ack)
-    this.deliver(packet.data)
-    this.base = packet.header.ack + 1
+    while (this.lastAckRecieved++ < packet.header.ack)
+      this.deliver(packet.data)
+    this.base = packet.header.ack
 
     // se os ack forem iguais E a call da de cima tiver sido feita, ele pode receber pacotes
     if (this.base === this.seqNum) {
@@ -52,8 +54,7 @@ module.exports = class RDTSender extends Sender {
     this.timeout = setTimeout(() => {
       this.hasTimeout = false
       this.startTimeout()
-      this.print("base", this.base)
-      for (let i = this.base-1; i < this.seqNum; i++)
+      for (let i = this.base; i <= this.seqNum; i++)
       if (this.sent_noACK[i])
         this.send2Net(this.sent_noACK[i])
           
@@ -61,14 +62,14 @@ module.exports = class RDTSender extends Sender {
     }, this.timeoutAmmount)
   }
 
-  sendWaitingMessages = (a) => {
+  sendWaitingMessages = () => {
     // se não tiver pacotes pra enviar, não faça nada
-    if (this.toSend.length === 0) return
-    if (this.seqNum > this.base + this.windowSize) return
+    if (this.toSend.length === 0) return this.startTimeout()
+    if (this.seqNum > this.base + windowSize) return
     // se tiver pacotes pra enviar
     
     // aqui eu verifico se minha window esta cheia. se meu nextseqnum > base + window, ela esta cheia
-    if (this.seqNum < this.base + this.windowSize) {    // se o numero de mensagens enviado for menor que o da banda
+    if (this.seqNum < this.base + windowSize) {    // se o numero de mensagens enviado for menor que o da banda
       const proxMsg = this.toSend.shift()               // anda no array e recebe o elemento que foi retirado
       this.print("prox msg:", proxMsg)
       this.currentPkt = new Packet(proxMsg, { ack: this.seqNum })   // cria o pacote com a mensagem e o numero de sequencia
