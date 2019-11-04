@@ -12,7 +12,7 @@ module.exports = {
       cor: '36m',
     },
     emissorME: {
-      log: false,
+      log: true,
       nome: 'EMISSOR-TRANS',
       cor: '93m',
     },
@@ -22,7 +22,7 @@ module.exports = {
       cor: '95m',
     },
     receptorME: {
-      log: false,
+      log: true,
       nome: 'RECEPTOR-TRANS',
       cor: '93m',
     },
@@ -30,7 +30,7 @@ module.exports = {
       log: true,
       nome: 'MAIN',
       cor: '91m',  
-    }
+    },
   },
   canal: {
     // quantos ms demora para o primeiro byte de um pacote que começou a ser enviado a chegar ao destino
@@ -45,5 +45,5 @@ module.exports = {
     corruptionRate: 0,
   },
   protocol: "GoBack",
-  senderTimeout: 1000,
+  senderTimeout: 5000,
 }

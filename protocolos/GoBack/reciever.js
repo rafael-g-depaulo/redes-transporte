@@ -1,10 +1,12 @@
 const { Packet, isCorrupted } = require('../../util/packet')
 const Host = require('../host')
+const { windowSize } = require('../../config')
 
 module.exports = class Reciever extends Host {
   //Aqui teremos dois estados
   // expect = 0 ExpectedSeqNum = 0
-  expect = 0
+  expect = 1
+  ACK = new Packet("", { ack: this.expect })
 
   constructor(channel) {
     super(channel, "receptorME")  // chama a superclasse
@@ -12,27 +14,19 @@ module.exports = class Reciever extends Host {
   
   // recebe mensagens por esse método
   recieve = packet => {
-    // se estiver corrompido ou não é o pacote certo (número de sequencia errado)
-    if(isCorrupted(packet) || this.expect != packet.header.ack){
-        this.print("corrompido ou fora de ordem")
-        this.send2Net(ACK)
-    }
     
-    // if (isCorrupted(packet)){
-    //     this.print("recebi um pacote corrompido")
-    //     this.send2Net(new Packet(packet.data, { ack: (this.expect - 1) }))//envia o mesmo pacote pq o sender vai verificar que ta fora de ordem  
-     
-    // } else if(this.expect != packet.header.ack) {
-    //   this.print("recebi um pacote corrompido, duplicado ou fora de ordem")
-    //   this.send2Net(new Packet(packet.data, { ack: this.expect }))//envia o mesmo pacote pq o sender vai verificar que ta fora de ordem  
+    // se estiver corrompido ou não é o pacote certo (número de sequencia errado)
+    if (isCorrupted(packet) || this.expect !== packet.header.ack){
+        this.print("corrompido ou fora de ordem. esperava:", this.expect, "recebi", packet.header.ack)
+    }
     
     // se o número de sequencia for o esperado
    else {
       this.print("recebi um pacote:", packet)
-      const ACK = new Packet("", { ack: this.expect })
-      this.expect = this.expect + 1  // incremente o ack esperado
-      this.deliver(packet)  // entrega a mensagem para a camada de aplicação
-      this.send2Net(ACK)    // manda o ACK
+      this.ACK = new Packet("", { ack: this.expect })
+      this.expect++
+      this.deliver(packet)        // entrega a mensagem para a camada de aplicação
+      this.send2Net(this.ACK)     // manda o ACK
     }
   }
 }
